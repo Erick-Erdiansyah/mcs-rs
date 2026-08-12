@@ -1,18 +1,28 @@
 use candle_core::{Device, Tensor};
 
+mod attention;
 mod embedding;
+mod helper;
 mod math;
 
-use math::{dot, matmul};
+use math::{dot, softmax_rows, transpose};
+
+use crate::math::divide_matrix;
 
 fn main() {
-    let mut c: Vec<Vec<f32>> = Vec::new();
-    c.push(vec![1.0, 2.0]);
-    c.push(vec![3.0, 4.0]);
-    let mut d: Vec<Vec<f32>> = Vec::new();
-    d.push(vec![5.0, 6.0]);
-    d.push(vec![7.0, 8.0]);
-    println!("{:?}", matmul(&c, &d));
+    let mut w = 0.5;
+    let x = 2.0;
+    let target = 10.0;
+    let learning_rate = 0.01;
+
+    for epoch in 0..100 {
+        let prediction = x * w;
+        let loss = (prediction - target) * (prediction - target);
+        let gradient = 2.0 * (prediction - target) * x;
+        w = w - learning_rate * gradient;
+
+        println!("Epoch {epoch}: w = {:.4}, loss = {:.4}", w, loss);
+    }
 }
 
 fn attention_scores(queries: &[Vec<f32>], keys: &[Vec<f32>]) -> Vec<Vec<f32>> {
