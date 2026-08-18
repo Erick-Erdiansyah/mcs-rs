@@ -45,6 +45,23 @@ pub fn matmul(a: &[Vec<f32>], b: &[Vec<f32>]) -> Matrix {
     result
 }
 
+pub fn matadd(a: &[Vec<f32>], b: &[Vec<f32>]) -> Matrix {
+    let mut result = Vec::new();
+    assert_eq!(a[0].len(), b.len());
+    for row in a {
+        let mut output_row = Vec::new();
+        for (index, _) in b.iter().enumerate() {
+            let mut column = Vec::new();
+            for c in b {
+                column.push(c[index]);
+            }
+            output_row.push(dot(row, &column));
+        }
+        result.push(output_row);
+    }
+    result
+}
+
 pub fn transpose(matrix: &[Vec<f32>]) -> Matrix {
     let mut result = Vec::new();
     for col in 0..matrix[0].len() {
