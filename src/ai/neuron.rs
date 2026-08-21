@@ -70,7 +70,7 @@ impl Layer {
 }
 
 pub struct MLP {
-    layers: Vec<Layer>,
+    pub layers: Vec<Layer>,
 }
 
 // pony-powered neural network
