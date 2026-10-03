@@ -1,4 +1,4 @@
-use crate::helper::Matrix;
+use crate::ai::helper::Matrix;
 
 pub fn dot(a: &[f32], b: &[f32]) -> f32 {
     let mut sum = 0.0;

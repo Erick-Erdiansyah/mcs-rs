@@ -1,23 +1,18 @@
 use std::{cell::RefCell, rc::Rc};
 
-use candle_core::{D, Device, Tensor};
-
-mod attention;
-mod embedding;
-mod helper;
-mod math;
-mod neuron;
-mod torch;
-
-use math::{dot, softmax_rows, transpose};
-use neuron::Neuron;
-
-use crate::{
+use crate::ai::{
     helper::ValueRef,
-    math::divide_matrix,
+    math::dot,
     neuron::MLP,
     torch::{Op, Value},
 };
+
+pub mod attention;
+pub mod embedding;
+pub mod helper;
+pub mod math;
+pub mod neuron;
+pub mod torch;
 
 fn main() {
     let model = MLP::new(3, &[3, 1]);

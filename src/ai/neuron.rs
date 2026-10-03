@@ -1,4 +1,4 @@
-use crate::{add, helper::ValueRef, mul, tanh, torch::Value};
+use crate::ai::{add, helper::ValueRef, mul, tanh, torch::Value};
 
 pub struct Neuron {
     pub weight: Vec<ValueRef>,

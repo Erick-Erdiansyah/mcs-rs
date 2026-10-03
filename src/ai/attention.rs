@@ -1,8 +1,8 @@
 use rand::RngExt;
 
 use crate::{
-    helper::Matrix,
-    math::{divide_matrix, matmul, softmax_rows, transpose},
+    ai::helper::Matrix,
+    ai::math::{divide_matrix, matmul, softmax_rows, transpose},
 };
 
 pub struct AttentionHead {
