@@ -1,4 +1,9 @@
-use crate::ai::helper::Matrix;
+use crate::ai::{
+    div, exp,
+    helper::{Matrix, ValueRef},
+    sub,
+    torch::Value,
+};
 
 pub fn dot(a: &[f32], b: &[f32]) -> f32 {
     let mut sum = 0.0;
@@ -9,6 +14,7 @@ pub fn dot(a: &[f32], b: &[f32]) -> f32 {
 }
 
 pub fn softmax(scores: &[f32]) -> Vec<f32> {
+    // find max score
     let max = scores.iter().copied().fold(f32::NEG_INFINITY, f32::max);
     let mut exp_scores = Vec::new();
     let mut sum: f32 = 0.0;
@@ -18,6 +24,28 @@ pub fn softmax(scores: &[f32]) -> Vec<f32> {
         sum += e;
     }
     exp_scores.into_iter().map(|x| x / sum).collect()
+}
+
+pub fn softmax_value(scores: &Vec<ValueRef>) -> Vec<ValueRef> {
+    // find max
+    let mut max = f32::NEG_INFINITY;
+    for s in scores {
+        let current = s.borrow().data;
+        if current > max {
+            max = current;
+        }
+    }
+    let max_val = Value::new(max);
+    let mut exp_scores = Vec::new();
+    let mut sum: f32 = 0.0;
+    for score in scores {
+        let shifted = sub(score, &max_val);
+        let e = exp(&shifted);
+        exp_scores.push(e.clone());
+        sum += e.borrow().data;
+    }
+    let newsum = Value::new(sum);
+    exp_scores.into_iter().map(|x| div(&x, &newsum)).collect()
 }
 
 pub fn softmax_rows(matrix: &[Vec<f32>]) -> Matrix {

@@ -7,8 +7,12 @@ pub struct Neuron {
 
 impl Neuron {
     pub fn new(input_size: usize) -> Self {
+        let mut weight = Vec::new();
+        for _ in 0..input_size {
+            weight.push(Value::new(rand::random_range(-0.1..0.1)));
+        }
         Self {
-            weight: vec![Value::new(0.5), Value::new(-0.2), Value::new(0.1)],
+            weight,
             bias: Value::new(0.0),
         }
     }
@@ -75,6 +79,7 @@ pub struct MLP {
 
 // pony-powered neural network
 impl MLP {
+    // input = embed size, newron [neuron size,output]
     pub fn new(input: usize, neuron: &[usize]) -> Self {
         let mut layers = Vec::new();
         let mut x = input;

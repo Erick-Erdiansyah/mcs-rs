@@ -14,8 +14,8 @@ pub mod math;
 pub mod neuron;
 pub mod torch;
 
-fn main() {
-    let model = MLP::new(3, &[3, 1]);
+fn _s() {
+    let model = MLP::new(4, &[4, 1]);
 
     let inputs = vec![Value::new(2.0), Value::new(3.0), Value::new(4.0)];
 
@@ -116,6 +116,17 @@ pub fn sub(a: &ValueRef, b: &ValueRef) -> ValueRef {
     }))
 }
 
+pub fn div(a: &ValueRef, b: &ValueRef) -> ValueRef {
+    Rc::new(RefCell::new(Value {
+        data: a.borrow().data / b.borrow().data,
+        grad: 0.0,
+        prev: vec![Rc::clone(a), Rc::clone(b)],
+        op: torch::Op::Sub,
+        visited: false,
+        extra: None,
+    }))
+}
+
 pub fn pow(a: &ValueRef, b: f32) -> ValueRef {
     let data = a.borrow().data.powf(b);
     Rc::new(RefCell::new(Value {
@@ -135,6 +146,18 @@ pub fn tanh(a: &ValueRef) -> ValueRef {
         grad: 0.0,
         prev: vec![Rc::clone(a)],
         op: torch::Op::Tanh,
+        visited: false,
+        extra: None,
+    }))
+}
+
+pub fn exp(a: &ValueRef) -> ValueRef {
+    let data = a.borrow().data.exp();
+    Rc::new(RefCell::new(Value {
+        data,
+        grad: 0.0,
+        prev: vec![Rc::clone(a)],
+        op: torch::Op::Exp,
         visited: false,
         extra: None,
     }))

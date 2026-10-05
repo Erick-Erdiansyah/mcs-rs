@@ -1,46 +1,51 @@
 use std::io;
 
-use crate::ai::embedding::Embedding;
+use crate::ai::{
+    embedding::Embedding,
+    math::{softmax, softmax_value},
+    neuron::MLP,
+    torch::Value,
+};
 mod ai;
 
 fn main() {
-    let mut id: Vec<usize> = Vec::new();
-    let mut buffer = String::new();
-    let stdin = io::stdin();
-    let _ = stdin.read_line(&mut buffer);
-    buffer = buffer.trim().to_string();
-    let in_vec: Vec<char> = buffer.chars().collect();
-    for i in in_vec {
-        match i {
-            'a' => id.push(1),
-            'b' => id.push(2),
-            'c' => id.push(3),
-            'd' => id.push(4),
-            'e' => id.push(5),
-            'f' => id.push(6),
-            'g' => id.push(7),
-            'h' => id.push(8),
-            'i' => id.push(9),
-            'j' => id.push(10),
-            'k' => id.push(11),
-            'l' => id.push(12),
-            'm' => id.push(13),
-            'n' => id.push(14),
-            'o' => id.push(15),
-            'p' => id.push(16),
-            'q' => id.push(17),
-            'r' => id.push(18),
-            's' => id.push(19),
-            't' => id.push(20),
-            'u' => id.push(21),
-            'v' => id.push(22),
-            'w' => id.push(23),
-            'x' => id.push(24),
-            'y' => id.push(25),
-            'z' => id.push(26),
-            _ => id.push(0),
-        }
-    }
+    // let mut id: Vec<usize> = Vec::new();
+    // let mut buffer = String::new();
+    // let stdin = io::stdin();
+    // let _ = stdin.read_line(&mut buffer);
+    // buffer = buffer.trim().to_string();
+    // let in_vec: Vec<char> = buffer.chars().collect();
+    // for i in in_vec {
+    //     match i {
+    //         'a' => id.push(1),
+    //         'b' => id.push(2),
+    //         'c' => id.push(3),
+    //         'd' => id.push(4),
+    //         'e' => id.push(5),
+    //         'f' => id.push(6),
+    //         'g' => id.push(7),
+    //         'h' => id.push(8),
+    //         'i' => id.push(9),
+    //         'j' => id.push(10),
+    //         'k' => id.push(11),
+    //         'l' => id.push(12),
+    //         'm' => id.push(13),
+    //         'n' => id.push(14),
+    //         'o' => id.push(15),
+    //         'p' => id.push(16),
+    //         'q' => id.push(17),
+    //         'r' => id.push(18),
+    //         's' => id.push(19),
+    //         't' => id.push(20),
+    //         'u' => id.push(21),
+    //         'v' => id.push(22),
+    //         'w' => id.push(23),
+    //         'x' => id.push(24),
+    //         'y' => id.push(25),
+    //         'z' => id.push(26),
+    //         _ => id.push(0),
+    //     }
+    // }
     // let mut temp = Vec::new();
     // let mut other = Vec::new();
     // for i in 0..id.len() - 1 {
@@ -56,18 +61,29 @@ fn main() {
     //     println!("target : {target}");
     // }
 
-    let mut w = Vec::new();
+    let mut weights = Vec::new();
     for _ in 0..27 {
         let b = vec![
-            rand::random_range(0.0..1.0),
-            rand::random_range(0.0..1.0),
-            rand::random_range(0.0..1.0),
-            rand::random_range(0.0..1.0),
+            Value::new(rand::random_range(0.0..1.0)),
+            Value::new(rand::random_range(0.0..1.0)),
+            Value::new(rand::random_range(0.0..1.0)),
+            Value::new(rand::random_range(0.0..1.0)),
         ];
-        w.push(b);
+        weights.push(b);
     }
-    for i in 0..w.len() {
-        println!("{:?}", w[i]);
+
+    let model = MLP::new(4, &[8, 27]);
+
+    let input_vector = weights[8].clone();
+
+    let target = Value::new(1.0);
+
+    let output = model.forward(&input_vector);
+
+    let prob = softmax_value(&output);
+
+    for p in prob {
+        println!("output for prob : {:?}", p.borrow().data)
     }
 
     // let embedding = Embedding { weights: a };
