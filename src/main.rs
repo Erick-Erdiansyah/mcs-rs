@@ -1,8 +1,11 @@
 use std::io;
 
 use crate::ai::{
+    backward,
     embedding::Embedding,
+    log,
     math::{softmax, softmax_value},
+    neg,
     neuron::MLP,
     torch::Value,
 };
@@ -76,14 +79,28 @@ fn main() {
 
     let input_vector = weights[8].clone();
 
-    let target = Value::new(1.0);
-
     let output = model.forward(&input_vector);
 
     let prob = softmax_value(&output);
 
-    for p in prob {
-        println!("output for prob : {:?}", p.borrow().data)
+    let core_prob = prob[5].clone();
+
+    let log = log(&core_prob);
+
+    let loss = neg(&log);
+
+    backward(loss);
+
+    for layer in &model.layers {
+        for neuron in &layer.neurons {
+            for weight in &neuron.weight {
+                println!(
+                    "data: {}, grad: {}",
+                    weight.borrow().data,
+                    weight.borrow().grad
+                );
+            }
+        }
     }
 
     // let embedding = Embedding { weights: a };

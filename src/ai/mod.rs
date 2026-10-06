@@ -163,6 +163,30 @@ pub fn exp(a: &ValueRef) -> ValueRef {
     }))
 }
 
+pub fn log(a: &ValueRef) -> ValueRef {
+    let data = a.borrow().data.ln();
+    Rc::new(RefCell::new(Value {
+        data,
+        grad: 0.0,
+        prev: vec![Rc::clone(a)],
+        op: torch::Op::Log,
+        visited: false,
+        extra: None,
+    }))
+}
+
+pub fn neg(a: &ValueRef) -> ValueRef {
+    let data = -a.borrow().data;
+    Rc::new(RefCell::new(Value {
+        data,
+        grad: 0.0,
+        prev: vec![Rc::clone(a)],
+        op: torch::Op::Log,
+        visited: false,
+        extra: None,
+    }))
+}
+
 pub fn topo_ordering(root: ValueRef, order: &mut Vec<ValueRef>) {
     let visited = root.borrow().visited;
     let parents = root.borrow().prev.clone();
@@ -234,6 +258,12 @@ pub fn backward(root: ValueRef) {
             }
             Op::Exp => {
                 parents[0].borrow_mut().grad += current_grad * output;
+            }
+            Op::Log => {
+                parents[0].borrow_mut().grad += current_grad * (1.0 / output);
+            }
+            Op::Neg => {
+                parents[0].borrow_mut().grad += current_grad * 1.0;
             }
             Op::None => {}
         }

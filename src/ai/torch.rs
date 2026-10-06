@@ -13,6 +13,8 @@ pub enum Op {
     ReLU,
     Tanh,
     Exp,
+    Log,
+    Neg,
 }
 
 #[derive(Debug, Clone)]
